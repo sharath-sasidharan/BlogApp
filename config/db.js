@@ -8,6 +8,7 @@ const connectDB = async () => {
         .white
     );
   } catch (error) {
+    console.log(error);
     console.log(`MONGO connect Error ${Error}`.bgRed.white);
   }
 };

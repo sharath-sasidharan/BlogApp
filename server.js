@@ -10,6 +10,7 @@ dotenv.config();
 
 //Router import
 const userRoutes = require("./Routes/userRoutes");
+const blogRoutes = require("./Routes/blogRoutes");
 
 //mongodb connection
 connectDB();
@@ -21,6 +22,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/blogs", blogRoutes);
 
 //routes
 
@@ -31,8 +33,8 @@ app.get("/", (req, res) => {
 });
 
 // Port
-const PORT = process.env.PORT || 8080;
-app.listen(8080, () => {
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
   console.log(
     `Server Running on ${process.env.DEV_MODE} on port ${PORT}`.bgCyan.white
   );
