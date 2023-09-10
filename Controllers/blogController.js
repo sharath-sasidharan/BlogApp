@@ -1,17 +1,33 @@
 const Blogs = require("../models/blogsModel");
-
+const userModel = require("../models/userModel");
+const mongoose = require("mongoose");
 exports.createBlog = async (req, res) => {
   try {
-    const { title, description, image } = req.body;
+    const { title, description, image, user } = req.body;
 
     //validation
-    if (!title || !description || !image) {
+    if (!title || !description || !image || !user) {
       return res.status(400).json({
         message: "Please fill the required fields",
       });
     }
 
-    const newBlog = new Blogs({ title, description, image });
+    //UserExist check
+    const existingUser = await userModel.findById(user);
+    if (!existingUser) {
+      return res.status(400).json({
+        message: "user not found",
+      });
+    }
+
+    const newBlog = new Blogs({ title, description, image, user });
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await newBlog.save({ session });
+    existingUser.blogs.push(newBlog);
+    await existingUser.save({ session });
+    await session.commitTransaction();
     await newBlog.save();
     return res.status(200).json({
       message: "Blog created",
@@ -91,13 +107,15 @@ exports.singleBlog = async (req, res) => {
 exports.deleteBlog = async (req, res) => {
   try {
     const { id } = req.params;
-    const blog = await Blogs.findByIdAndDelete(id);
+    const blog = await Blogs.findByIdAndDelete(id).populate("user");
     if (!blog) {
       return res.status(400).json({
         success: false,
         message: "Blog not found",
       });
     }
+    await blog.user.blogs.pull(blog);
+    await blog.user.save();
     return res.status(200).json({
       message: "Blog Deleted Success",
       success: true,
@@ -105,6 +123,29 @@ exports.deleteBlog = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    return res.status(500).json({
+      message: "Something went wrong",
+      success: false,
+    });
+  }
+};
+
+exports.userBlogController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userModel.findById(id).populate("blogs");
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "user Blog not found",
+      });
+    }
+    return res.status(200).json({
+      message: "User Blog List Fetched",
+      success: true,
+      user,
+    });
+  } catch (err) {
     return res.status(500).json({
       message: "Something went wrong",
       success: false,
