@@ -23,7 +23,16 @@ const Blogs = () => {
   }, []);
   return (
     <>
-      <BlogCard />
+      {blogs &&
+        blogs.map((blog) => (
+          <BlogCard
+            title={blog.title}
+            description={blog.description}
+            image={blog.image}
+            username={blog.user.username}
+            time={blog.createdAt}
+          />
+        ))}
     </>
   );
 };

@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authActions } from "../redux/store";
-
 import axios from "axios";
+
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -30,6 +30,7 @@ const Login = () => {
         password: inputs.password,
       });
       if (data.success) {
+        localStorage.setItem("user", data?.user._id);
         dispatch(authActions.login());
         alert("Login Success");
         navigate("/");
@@ -43,7 +44,7 @@ const Login = () => {
     <>
       <form onSubmit={handleSubmit}>
         <div style={{ display: "flex" }}>
-          <img src="login.png" style={{ flex: 0 }} />
+          <img src="login.png" style={{ flex: 0 }} alt="login" />
           <Box
             maxWidth={450}
             display={"flex"}

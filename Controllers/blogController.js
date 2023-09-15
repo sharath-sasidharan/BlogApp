@@ -44,7 +44,7 @@ exports.createBlog = async (req, res) => {
 };
 exports.getBlogs = async (req, res) => {
   try {
-    const blogs = await Blogs.find({});
+    const blogs = await Blogs.find({}).populate("user");
     return res.status(200).json({
       Count: blogs.length,
       message: "Blog fetched success",
