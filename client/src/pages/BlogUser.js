@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import BlogCard from "../components/BlogCard";
+import { Link } from "@mui/material";
 
 let user_name;
 export const BlogUser = () => {
@@ -27,6 +28,8 @@ export const BlogUser = () => {
       {blogs && blogs.length > 0 ? (
         blogs.map((blog) => (
           <BlogCard
+            blogId={blog._id}
+            isUser={true}
             title={blog.title}
             description={blog.description}
             image={blog.image}
@@ -45,7 +48,19 @@ export const BlogUser = () => {
             fontWeight: "400",
           }}
         >
-          Blog Not Found, Please Create one !
+          Blog Not Found, Please
+          <Link
+            href="/add"
+            style={{
+              textDecoration: "none",
+              background: "#e74c3c",
+              color: "#ecf0f1",
+              margin: "0 10px",
+            }}
+          >
+            Click Here
+          </Link>
+          To Create Your First Blog
         </h1>
       )}
     </>

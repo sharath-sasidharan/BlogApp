@@ -1,17 +1,30 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const Register = () => {
+const BlogDetails = () => {
+  const [inputs, setInputs] = useState({});
   const navigate = useNavigate();
 
-  const [inputs, setInputs] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
+  let { id } = useParams();
+
+  // getBlogDetail
+  const getBlogDetail = async () => {
+    try {
+      const { data } = await axios.get(`/api/v1/blogs/single-blog/${id}`);
+      if (data?.success) {
+        setInputs(data?.blogPage);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getBlogDetail();
+  }, [id]);
 
   // handleInput change
   const handleChange = (e) => {
@@ -25,14 +38,15 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("/api/v1/user/register", {
-        username: inputs.username,
-        email: inputs.email,
-        password: inputs.password,
+      const { data } = await axios.put(`/api/v1/blogs/update-blog/${id}`, {
+        title: inputs.title,
+        description: inputs.description,
+        image: inputs.image,
+        user: id,
       });
       if (data.success) {
-        toast.success("Register Success");
-        navigate("/login");
+        toast.success("Blog Updated");
+        navigate("/my-blogs");
       }
     } catch (err) {
       console.log(err);
@@ -60,54 +74,47 @@ const Register = () => {
             padding={3}
             textAlign={"center"}
           >
-            Register
+            Update A Blog
           </Typography>
           <TextField
-            placeholder="name"
-            value={inputs.username}
+            placeholder="title"
+            value={inputs.title}
             onChange={handleChange}
-            name="username"
+            name="title"
             margin="normal"
             type="text"
             required
           />
           <TextField
-            placeholder="email"
-            value={inputs.email}
+            placeholder="description"
+            value={inputs.description}
             onChange={handleChange}
-            name="email"
+            name="description"
             margin="normal"
-            type="email"
+            type="text"
             required
           />
           <TextField
-            placeholder="password"
-            value={inputs.password}
+            placeholder="image"
+            value={inputs.image}
             onChange={handleChange}
-            name="password"
+            name="image"
             margin="normal"
-            type="password"
+            type="text"
             required
           />
           <Button
+            onClick={handleSubmit}
             type="submit"
             variant="contained"
-            color="primary"
+            color="warning"
             sx={{ borderRadius: "30px", marginTop: 3 }}
           >
-            Submit
-          </Button>
-          <Button
-            onClick={() => navigate("/login")}
-            type="submit"
-            color="primary"
-            sx={{ borderRadius: "30px", marginTop: 3 }}
-          >
-            Already Registered ? Please Login
+            Update
           </Button>
         </Box>
       </form>
     </>
   );
 };
-export default Register;
+export default BlogDetails;

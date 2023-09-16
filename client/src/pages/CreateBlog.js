@@ -1,8 +1,8 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const CreateBlog = () => {
   const id = localStorage.getItem("user");
@@ -32,7 +32,7 @@ const CreateBlog = () => {
         user: id,
       });
       if (data.success) {
-        alert("Blog Created Success");
+        toast.success("Blog Created Success");
         navigate("/my-blogs");
       }
     } catch (err) {

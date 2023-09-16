@@ -9,7 +9,6 @@ const {
 } = require("../Controllers/blogController");
 
 //router object
-
 const router = express.Router();
 
 router.post("/create-blog", createBlog);

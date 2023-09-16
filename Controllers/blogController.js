@@ -108,18 +108,12 @@ exports.deleteBlog = async (req, res) => {
   try {
     const { id } = req.params;
     const blog = await Blogs.findByIdAndDelete(id).populate("user");
-    if (!blog) {
-      return res.status(400).json({
-        success: false,
-        message: "Blog not found",
-      });
-    }
     await blog.user.blogs.pull(blog);
     await blog.user.save();
+
     return res.status(200).json({
       message: "Blog Deleted Success",
       success: true,
-      blog,
     });
   } catch (err) {
     console.log(err);

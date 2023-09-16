@@ -11,19 +11,22 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../redux/store";
+import toast from "react-hot-toast";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // Global State
-  const isLogin = useSelector((state) => state.isLogin);
-
+  let isLogin = useSelector((state) => state.isLogin);
+  isLogin = isLogin || localStorage.getItem("user");
   //Normal State
   const [value, setValue] = useState();
 
   const logoutHandler = () => {
     dispatch(authActions.logout());
     navigate("/login");
+    toast.success("Logout Success");
+    localStorage.clear();
   };
 
   return (
